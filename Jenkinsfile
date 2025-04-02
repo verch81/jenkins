@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/your-repo/python-jenkins-demo.git'
+                git 'git@github.com:/verch81/jenkins.git'
             }
         }
         stage('Install Dependencies') {
