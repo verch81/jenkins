@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/verch81/jenkins.git'
+                git branch: 'main', url: 'https://github.com/verch81/jenkins.git'
             }
         }
 
@@ -23,6 +23,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh "./$VENV_DIR/bin/pytest --junitxml=results.xml"
+                sh "pytest test_calculator.py --verbose"
             }
         }
 
@@ -32,16 +33,11 @@ pipeline {
             }
         }
     }
-
+   
     post {
         always {
-            emailext (
-                to: 'InsertYour@Mail.Here',
-                subject: "Jenkins Pipeline: ${currentBuild.fullDisplayName}",
-                body: """<p>Build result: ${currentBuild.currentResult}</p>
-                         <p>Check console output at <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
-                mimeType: 'text/html'
-            )
+            archiveArtifacts artifacts: 'results.xml', fingerprint: true
+            cleanWs()
         }
     }
 }
